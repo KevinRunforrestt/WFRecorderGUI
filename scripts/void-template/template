@@ -1,0 +1,50 @@
+# Template file for 'wf-recorder-gui'
+#
+# This template builds from a LOCAL tarball — no GitHub upload needed.
+# The make_xbps.sh script creates the tarball, computes the sha256, and
+# injects it into this template before building.
+#
+# Build with: ./scripts/make_xbps.sh
+
+pkgname=wf-recorder-gui
+version=1.0beta
+revision=1
+build_style=cargo
+hostmakedepends="pkg-config rust"
+makedepends="gtk+3-devel glib-devel pango-devel cairo-devel atk-devel at-spi2-atk-devel gdk-pixbuf-devel wayland-devel wayland-protocols libxkbcommon-devel libepoxy-devel MesaLib-devel fribidi-devel harfbuzz-devel pipewire-devel pulseaudio-devel dbus-devel"
+depends="wf-recorder wlr-randr slurp ffmpeg xdg-desktop-portal xdg-desktop-portal-wlr"
+short_desc="GTK3 GUI and TUI for wf-recorder on wlroots/Smithay compositors"
+maintainer="wf-recorder-gui contributors <noreply@example.com>"
+license="MIT"
+homepage="https://github.com/users/wf-recorder-gui"
+
+# Source: local tarball created by make_xbps.sh.
+# The sha256 is injected by make_xbps.sh (xbps-src does NOT accept
+# checksum=SKIP for local files — it purges them).
+distfiles="wf-recorder-gui-${version}.tar.gz"
+checksum=__SHA256_PLACEHOLDER__
+
+post_install() {
+    # .desktop file — sed the Exec= line to use the full install path,
+    # write to a temp file in ${wrksrc}, then vinstall it.
+    # vinstall ALWAYS creates the destination directory automatically,
+    # so we don't need vmkdir (which failed in earlier attempts).
+    sed "s|^Exec=.*|Exec=/usr/bin/wf-recorder-gui|" \
+        ${FILESDIR}/io.github.wf-recorder-gui.desktop \
+        > ${wrksrc}/wf-recorder-gui.desktop
+    vinstall ${wrksrc}/wf-recorder-gui.desktop 644 usr/share/applications io.github.wf-recorder-gui.desktop
+
+    # Icon (SVG, scalable) — vinstall creates the dir automatically.
+    vinstall ${FILESDIR}/io.github.wf-recorder-gui.svg 644 usr/share/icons/hicolor/scalable/apps
+
+    # AppStream metainfo — vinstall creates the dir automatically.
+    vinstall ${FILESDIR}/io.github.wf-recorder-gui.appdata.xml 644 usr/share/metainfo
+
+    # Symlink so the TUI can be launched as `wf-recorder-tui`
+    # (busybox-style argv0 detection). ${DESTDIR}/usr/bin/ already exists
+    # because cargo installed the binary there.
+    ln -sf wf-recorder-gui ${DESTDIR}/usr/bin/wf-recorder-tui
+
+    # License file
+    vlicense LICENSE
+}

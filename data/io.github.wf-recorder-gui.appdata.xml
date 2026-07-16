@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.wf-recorder-gui</id>
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>wf-recorder-gui</name>
+  <summary>GTK3 GUI and TUI for wf-recorder on wlroots compositors</summary>
+  <description>
+    <p>
+      A clean, theme-respecting frontend for wf-recorder. Provides a GTK3 GUI,
+      a ratatui-based TUI, a system tray icon, and xdg-desktop-portal integration.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>GTK3 GUI without CSD (respects the WM's title bar)</li>
+      <li>Terminal UI with the same feature set</li>
+      <li>System tray icon with idle/recording/error states</li>
+      <li>Preset system with three resource tiers (low / medium / high-end)</li>
+      <li>Video formats: MP4 (H.264), WebM (VP9), MKV (H.264), GIF</li>
+      <li>Audio formats: AAC, MP3, Vorbis (OGG), Opus</li>
+      <li>Auto-detected PipeWire / PulseAudio backend</li>
+      <li>FPS changer (15-144), CRF quality slider, per-stream bitrate</li>
+      <li>xdg-desktop-portal FileChooser for the TUI</li>
+      <li>GlobalShortcuts portal integration (where supported)</li>
+      <li>X11 / non-wlroots detection with a clear warning</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.wf-recorder-gui.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <caption>The main configuration window</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://github.com/ammen99/wf-recorder</url>
+  <provides>
+    <binary>wf-recorder-gui</binary>
+  </provides>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="0.1.0" date="2026-07-13">
+      <description>
+        <p>Initial release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=WFRecorderGUI
+GenericName=Screen Recorder
+Comment=GTK3 GUI for wf-recorder on wlroots/Smithay compositors
+Comment[es]=Interfaz GTK3 para wf-recorder en compositores wlroots/Smithay
+Exec=wf-recorder-gui
+Icon=io.github.wf-recorder-gui
+Categories=AudioVideo;Video;Recorder;GTK;
+Terminal=false
+StartupNotify=true
+StartupWMClass=wf-recorder-gui
+Keywords=screen;recorder;capture;wayland;wlroots;grabador;pantalla;

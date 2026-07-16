@@ -1,0 +1,60 @@
+WFRecorderGUI TUI — Atajos de teclado
+=======================================
+
+Navegación
+----------
+  h / Flecha izquierda     Enfocar panel anterior
+  l / Flecha derecha / Tab Enfocar siguiente panel
+  j / Flecha abajo         Bajar seleccion (circular)
+  k / Flecha arriba        Subir seleccion (circular)
+  g                        Inicio de lista
+  G                        Fin de lista
+  Click del raton          Enfocar panel donde se hizo click
+  Rueda del raton          Mover seleccion arriba/abajo
+
+Grabacion
+---------
+  r                        Iniciar grabacion
+  s                        Detener grabacion
+  p / Barra espaciadora    Pausar / reanudar
+  Enter                    Accion contextual (aplicar / grabar / detener)
+
+Perfil
+------
+  t                        Cambiar tier (bajos / medios / altos recursos)
+
+Archivo
+-------
+  f                        Cambiar formato de video (MP4 / WebM / MKV / GIF)
+  o                        Editar ruta de guardado (abre input de texto)
+    (en modo edicion: Enter confirma, Esc cancela, Backspace borra)
+
+Video
+-----
+  d                        Activar/desactivar DMA-BUF
+  c                        Activar/desactivar grabacion de cursor
+  t                        Cambiar cuenta regresiva (0 / 3 / 5 / 10 segundos)
+
+Audio
+-----
+  a                        Cambiar fuente de audio
+
+Entrada
+-------
+  g                        Seleccionar region con slurp
+
+General
+-------
+  ?                        Mostrar/ocultar ayuda completa
+  Esc                      Cerrar ayuda / cancelar
+  q / Ctrl+c               Salir
+
+Notas
+-----
+- Los atajos r, s, p funcionan desde cualquier panel.
+- Los atajos con modificadores (Ctrl+Alt+R, etc.) configurados en la GUI
+  tambien funcionan en el TUI.
+- El raton solo funciona en terminales que soportan eventos de raton
+  (casi todas las terminales modernas).
+
+WFRecorderGUI v1.0-beta · Licencia MIT

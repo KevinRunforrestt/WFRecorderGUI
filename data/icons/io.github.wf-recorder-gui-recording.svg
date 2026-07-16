@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Recording state icon - brighter red dot pulsing -->
+  <circle cx="64" cy="64" r="58" fill="#2d2d2d" stroke="#565656" stroke-width="2"/>
+  <rect x="28" y="38" width="72" height="48" rx="4" fill="#3a3a3a" stroke="#7a7a7a" stroke-width="2"/>
+  <rect x="34" y="44" width="60" height="36" rx="2" fill="#1a1a1a"/>
+  <circle cx="64" cy="62" r="10" fill="#ff3b30"/>
+  <circle cx="64" cy="62" r="14" fill="none" stroke="#ff3b30" stroke-width="2" opacity="0.6"/>
+  <rect x="58" y="86" width="12" height="8" fill="#565656"/>
+  <rect x="44" y="94" width="40" height="4" rx="2" fill="#565656"/>
+</svg>

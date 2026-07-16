@@ -1,0 +1,173 @@
+CHANGELOG — WFRecorderGUI v1.0-beta
+=====================================
+Desde: "reemplaza los iconos por los de nerdfonts.com" hasta la fecha
+Fecha: 2026-07-15
+
+AUDITORIA Y LIMPIEZA DE CODIGO
+-------------------------------
+- Eliminadas 26 warnings de compilacion (de 26 a 0)
+- Eliminadas 4 dependencias no usadas del Cargo.toml: shlex, notify-rust, cairo-rs, indexmap
+- Eliminadas ~250 lineas de codigo muerto:
+  - errors.rs: 5 variantes de enum nunca construidas (NotWlroots, AlreadyRunning, NotRunning, Portal, Audio)
+  - portals.rs: 4 funciones eliminadas (block_on, pick_directory, percent_decode, hex_digit)
+  - shared.rs: 2 funciones eliminadas (find_audio_source, diagnostics_text)
+  - recorder.rs: 1 funcion eliminada (wait_for_output_file), import Duration removido
+  - config.rs: 2 metodos eliminados (description en ResourceTier, validate_output_dir en AppConfig)
+  - presets.rs: 1 metodo eliminado (delete_user)
+  - tui_app.rs: 2 funciones eliminadas (header_style, title en Panel)
+  - gtk_app.rs: imports eliminados (gdk::keys::constants, pango::prelude::*)
+  - wayland.rs: #[allow(dead_code)] anadido a WlrOutput, WlrMode, WlrPosition
+
+SEGURIDAD
+---------
+- Arreglado path traversal en custom_filename: nueva funcion sanitize_filename()
+  en shared.rs que elimina /, \, \0 y puntos iniciales
+- Verificado: sin shell injection (todos los procesos usan Command::new().args())
+- Verificado: unsafe kill() es aceptable (PIDs validos del proceso hijo)
+- Verificado: sin unwrap() peligrosos fuera de tests
+
+NERD FONTS EN TUI
+------------------
+- Reemplazados 10 iconos emoji por Nerd Font icons:
+  - Grabando: nf-fa-circle (f111)
+  - Pausa: nf-fa-pause (f04c)
+  - Tamaño archivo: nf-fa-hdd (f0a0)
+  - Countdown: nf-fa-clock (f017)
+  - Check: nf-fa-check (f00c)
+  - Times: nf-fa-times (f00d)
+  - Info: nf-fa-info_circle (f05a)
+  - Aviso: nf-fa-exclamation_triangle (f071)
+  - Error: nf-fa-times_circle (f057)
+
+GUI
+---
+- Eliminado StackSwitcher con 3 pestanas (Entrada/Salida/Grabacion)
+- Volvido a ventana unica con scroll compacto (4px entre frames)
+- Cuenta regresiva movida dentro del frame Video (eliminado frame separado)
+- Titulo de ventana: WFRecorderGUI
+- About dialog: APP_NAME cambiado a WFRecorderGUI
+- .desktop Name= cambiado a WFRecorderGUI en todos los archivos
+- Atajos personalizables con captura en vivo (click boton -> presionar tecla)
+- Fix bug F1/F2/F3: parse_accel ahora devuelve String en vez de char
+- Botones centrados con icono + texto (make_button con GtkBox centrado)
+
+TUI
+---
+- Disenado completo al estilo bluetui:
+  - 6 paneles en 2 columnas (Profile, Output, Video, Audio, Input, Record)
+  - Borde doble verde en panel activo, simple en inactivos
+  - Seleccion con blanco sobre DarkGray y simbolo >
+  - Help bar contextual en la parte inferior
+  - Help overlay con ? (lista completa de atajos)
+- Navegacion tipo VIM:
+  - h/l o Tab: cambiar panel
+  - j/k o flechas: mover seleccion (wrap-around)
+  - g/G: inicio/fin de lista
+  - r: grabar, s: detener, p/Space: pausar
+  - Enter: accion contextual
+  - q/Ctrl+c: salir
+- Soporte de raton:
+  - Click izquierdo: enfocar panel (usando areas reales guardadas en draw())
+  - Scroll: mover seleccion arriba/abajo
+- Sistema de notificaciones flotantes eliminado (heredado de bluetui)
+- Cuenta regresiva integrada en panel Video (tecla t: 0/3/5/10s)
+- Ruta de guardado editable con dialog de texto (tecla o):
+  - Popup centrado con borde verde
+  - Texto pre-lleno con la ruta actual
+  - Enter confirma, Esc cancela, Backspace borra
+- "focar" cambiado a "enfocar" en todos los textos
+- Panel Output muestra ruta de guardado + preview de nombre de archivo
+- Panel Record muestra timer, tamaño de archivo, estado y ruta en vivo
+- match arms identicos combinados (VideoFormat::Mp4 | VideoFormat::Mkv)
+
+GRABACION Y OPTIMIZACION
+-------------------------
+- Codec params optimizados:
+  - preset por tier (ultrafast/superfast/veryfast)
+  - bf=0 (sin B-frames, decode ligero en mpv)
+  - g=fps*2 (keyframes cada 2s, seeking rapido)
+  - tune=zerolatency (latencia minima)
+- Post-procesado faststart para MP4 (moov atom al inicio):
+  - Fix bug: extension .tmp causaba que ffmpeg no reconociera el formato
+  - Fix bug: Stdio::piped() con .status() causaba deadlock (cambiado a .output())
+- Escalado de calidad en post-procesado:
+  - Fix bug: sintaxis ffmpeg incorrecta (coma vs dos puntos en flags=lanczos)
+  - Calidad mejorada: preset=medium + crf=18 (visualmente sin perdida)
+  - pix_fmt=yuv420p + setsar=1 para compatibilidad maxima
+  - faststart integrado en el escalado (una sola pasada)
+- Selector de calidad: Original, 144p, 240p, 360p, 720p, 1080p, Manual
+- Resolucion manual con SpinButtons (ancho 16-7680, alto 16-4320)
+- Presets optimizados por tier:
+  - Bajos: ultrafast, CRF 28, 720p, 24fps
+  - Medios: superfast, CRF 23, 1080p, 30fps
+  - Altos: veryfast, CRF 18, Original, 60fps
+- VAAPI eliminado por completo (causaba mas problemas que beneficios)
+- Detccion de VAAPI eliminada (check_vaapi_available)
+- Timer desacoplado: recording_started guardado en AppState, actualizado cada 250ms
+- stderr de wf-recorder incluido en mensajes de error (ultimas 5 lineas)
+
+SCRIPTS
+--------
+- install_deps_void.sh:
+  - Deteccion de doas/sudo (prefiere doas)
+  - Deteccion correcta de Void Linux (xbps-install, no solo /etc/void-release)
+  - Nombres de paquetes corregidos: wayland-devel (no libwayland-devel), AppStream (no appstream)
+  - appimagetool y linuxdeploy descargados de upstream (no existen en repos Void)
+  - Configuracion de fish_user_paths para ~/.cargo/bin y ~/.local/bin
+  - Paquetes VAAPI eliminados
+- uninstall_deps_void.sh:
+  - Solo remueve paquetes -devel y base-devel (no runtime)
+  - Flag --runtime para remover tambien wf-recorder, slurp, etc.
+  - Flag --all para desinstalar Rust
+  - Flag --keep-appimage para conservar appimagetool/linuxdeploy
+  - Deteccion de doas/sudo
+  - Limpieza de fish_user_paths
+- build_and_install.sh (nuevo):
+  - Compila e instala binario + .desktop + icono + symlink wf-recorder-tui
+  - Rewrites Exec= con ruta completa para app launchers
+  - Configura fish_user_paths
+  - Flag --uninstall
+- uninstall.sh (nuevo):
+  - Remueve binario, .desktop, icono, metainfo, licencia
+  - Flag --clean-fish para limpiar fish_user_paths
+  - Flag --purge-config para borrar ~/.config/wf-recorder-gui/
+- make_xbps.sh (reesescrito):
+  - Clona void-packages y usa xbps-src (no xbps-create directo)
+  - Se niega a correr como root (xbps-src usa user namespaces)
+  - Crea tarball fuente con checksum sha256 real (no SKIP)
+  - Solo usa doas/sudo en el paso final --install
+  - Flag --clean para borrar el clone de void-packages
+- void-template/template:
+  - Nombres de paquetes corregidos (dbus-devel no libdbus-devel, etc.)
+  - do_fetch/do_extract eliminados, usa distfiles + checksum
+  - post_install usa vinstall (crea directorios automaticamente)
+  - sed rewrites Exec= con ruta completa
+  - version=1.0beta (sin underscore)
+- build_appimage.sh: Name=WFRecorderGUI
+- build_static_musl.sh: Name=WFRecorderGUI
+
+CONFIGURACION
+--------------
+- Keybinds personalizables (struct Keybinds en config.rs):
+  - start, stop, pause con formato GTK accelerator
+  - Persistidos en config.toml
+  - parse_accel devuelve String (soporta F1-F12, space, return)
+- VideoQuality enum: Original, P144, P240, P360, P720, P1080, Manual
+- Campos nuevos en RecordingConfig: quality, manual_width, manual_height, preset, custom_filename, countdown_secs
+- audio_source_desc anadido (PipeWire usa descripcion, PulseAudio usa name)
+- AppConfig guarda keybinds
+
+ARCHIVOS
+--------
+- TUI_ATAJOS.txt (nuevo): texto plano con todos los atajos del TUI
+- README.md: reescrito sin relleno, corregido River/Niri (Smithay no wlroots)
+- LICENSE: cambiado a MIT
+- version.rs: VERSION=1.0-beta, APP_NAME=WFRecorderGUI, LICENSE=MIT
+- Cargo.toml: version=1.0.0-beta, license=MIT
+
+ESTADISTICAS
+------------
+- Compilacion: 0 errores, 0 warnings
+- Clippy: 139 warnings (116 cosméticos doc-backticks, resto casts seguros)
+- Lineas de codigo: ~3500 Rust + ~550 SH
+- Tarballs: wf-recorder-gui-1.0beta-src.tar.gz (2.4MB) + wf-recorder-gui-1.0beta-linux-x86_64.tar.gz (2.3MB)
