@@ -2,6 +2,10 @@
 
 Interfaz gráfica simple para [`wf-recorder`](https://github.com/ammen99/wf-recorder), inspirada en SimpleScreenRecorder. Funciona en compositores Wayland que implementan `wlr-screencopy-unstable-v1`: wlroots (Sway, Wayfire, Labwc, Cage, dwl) y Smithay (Niri).
 
+
+> [!WARNING]
+> Este es un proyecto AI generated, se usó GLM 5.2 como modelo, esto no busca ser un proyecto serio, solo le pedí a la IA que hiciera un programa que nesecitaba ya que no habia GUIs decentes para wf-recorder.
+
 ## Qué es
 
 Un frontend en GTK3 + TUI que construye la línea de comandos correcta para `wf-recorder` y la lanza como subproceso. No reimplementa la captura de pantalla — usa wf-recorder por debajo.
